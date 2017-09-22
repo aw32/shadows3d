@@ -1,0 +1,285 @@
+<html>
+<head>
+<title>Shadows</title>
+<script src="js/basic/GLApp.js"></script> 
+<script src="js/basic/Color.js"></script>
+<script src="js/basic/BasicScene.js"></script>
+<script src="js/basic/Camera.js"></script>
+<script src="js/basic/CGMath.js"></script>
+<script src="js/basic/Quaternion.js"></script>
+<script src="js/basic/Tools.js"></script>
+<script src="js/basic/PMV.js"></script>
+<script src="js/basic/Program.js"></script>
+<script src="js/basic/Ressource.js"></script>
+<script src="js/basic/OrbitCamera.js"></script>
+<script src="js/basic/Buffer.js"></script>
+<script src="js/basic/LightCamera.js"></script>
+<script src="js/basic/FreeCamera.js"></script>
+<script src="js/basic/ShadowVolumeScene.js"></script>
+<script src="js/basic/ShadowVolume.js"></script>
+<style type="text/css">
+body{
+    background-color:#111;
+    margin:0;
+    overflow-x:hidden;
+}
+#screen{
+    width:100%;
+    height:100%;
+}
+#panel{
+    padding:5px;
+    vertical-align:middle;
+    height:25px;
+    position:fixed;
+    top:0;
+    background-color:#aaa;
+}
+#shadowmapimage{
+    position:absolute;
+    top:0;
+    z-index:100;
+    left:0;
+    bottom:0;
+    height:100%;
+}
+canvas:not(:last-child){
+    display:none;
+}
+/*
+#mesbox{
+    width:100%;
+    height:100%;
+    background-color:rgba(150,150,150,0.5);
+    text-align:center;
+    padding:15px;
+}
+#mestext{
+    background-color:#999;
+    text-align:center;
+    width:50%;
+    margin:10px;
+    margin-top:50px;
+    padding:10px;
+    min-height:100px;
+}
+#mestext textarea{
+    width:90%;
+    min-height:90px;
+}
+#messagetext{
+    width:50%;
+}
+*/
+</style>
+<script type="text/javascript">
+/*
+ * Register event callbacks
+ * Create Scene
+ */
+function startApp(){
+    var selectview = document.getElementById('selectview');
+    selectview.addEventListener("change", changeView, false);      
+    var drawobj = document.getElementById('drawobj');
+    drawobj.addEventListener("change", changeDrawObjects, false);
+    var drawedges = document.getElementById('drawedges');
+    drawedges.addEventListener("change", changeDrawEdges, false);
+    var drawvolume = document.getElementById('drawvolume');
+    drawvolume.addEventListener("change", changeDrawVolume, false);
+    var drawshadow = document.getElementById('drawshadow');
+    drawshadow.addEventListener("change", changeDrawShadow, false);
+    var selecttype = document.getElementById('selecttype');
+    selecttype.addEventListener("change", changeType, false);
+    var edgesontop = document.getElementById('edgesontop');
+    edgesontop.addEventListener("change", changeEdgesOnTop, false);
+    
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.glapp = new GLApp(canvas, new ShadowVolumeScene(), {stencil:true});
+}
+function changeRes(e){
+
+    var res = [64,128,256,512,1024,2048,4096]
+    var value = e.target.value;
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.glapp._scene.changeRes(value);
+    canvas.glapp.updateFrame();
+    var cur = document.getElementById('currentres');
+    clear(cur);
+    cur.appendChild(document.createTextNode(res[value]));
+}
+function changeBias(e){
+    var value = e.target.value;
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.glapp._scene.changeBias(value);
+    canvas.glapp.updateFrame();
+    var cur = document.getElementById('currentbias');
+    clear(cur);
+    cur.appendChild(document.createTextNode(value));
+}
+function changeView(e){
+    var value = e.target.value;
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.glapp._scene.changeView(value);
+    canvas.glapp.updateFrame();
+}
+function changeType(e){
+    var value = e.target.value;
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.glapp._scene.changeType(value);
+    canvas.glapp.updateFrame();
+}
+function changeDrawObjects(e){
+    var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.glapp._scene.changeDrawObjects(e.target.checked);
+        canvas.glapp.updateFrame();
+}
+function changeDrawEdges(e){
+    var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.glapp._scene.changeDrawEdges(e.target.checked);
+        canvas.glapp.updateFrame();
+}
+function changeEdgesOnTop(e){
+    var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.glapp._scene.changeEdgesOnTop(e.target.checked);
+        canvas.glapp.updateFrame();
+}
+function changeDrawVolume(e){
+    var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.glapp._scene.changeDrawVolume(e.target.checked);
+        canvas.glapp.updateFrame();
+}
+function changeDrawShadow(e){
+    var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.glapp._scene.changeDrawShadow(e.target.checked);
+        canvas.glapp.updateFrame();
+}
+function clear(node){
+    for(var ix=0;ix<node.childNodes.length; ix++){
+        node.removeChild(node.childNodes[ix]);
+    }
+}
+/*
+function takeScreenshot(){
+    var size = document.getElementById('screenshotsize').value;
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.glapp._scene.getScreenshot(showSMImage,size);
+    canvas.glapp.updateFrame();
+}
+function getCamera(){
+    var canvas = document.getElementsByTagName('canvas')[0];
+    var json = canvas.glapp._scene.getCamera();
+    displayMessage(json);
+}
+function setCamera(){
+    getMessage(function(text){
+        var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.glapp._scene.setCamera(text);
+        var obj = JSON.parse(text);
+        if(obj._type === 'free'){
+            document.getElementById('selectview').value = 1;
+        } else
+        if(obj._type === 'orbit'){
+            document.getElementById('selectview').value = 0;
+        }
+        canvas.glapp.updateFrame();
+    });
+}
+function showSMImage(imageurl){
+    var img = document.createElement('img');
+    img.src = imageurl;
+    img.id="shadowmapimage";
+    var closefn = function(event){
+        var body = document.getElementsByTagName('body')[0];        
+        body.removeChild(event.target);
+    };
+    img.onclick = closefn;
+    var body = document.getElementsByTagName('body')[0];
+    body.appendChild(img);
+}
+function displayMessage(message){
+    var div = document.createElement('div');
+    div.id="mesbox";
+    var div2 = document.createElement('div');
+    var text = document.createElement('textarea');
+    text.value = message;
+    div2.appendChild(text);
+    div2.id="mestext";
+    var button = document.createElement('input');
+    button.type = "button";
+    button.value = "Close";
+    button.onclick = function(){
+        var body = document.getElementsByTagName('body')[0];
+        body.removeChild(body.lastChild);
+    };
+    div2.appendChild(document.createElement('br'));
+    div2.appendChild(button);
+    div.appendChild(div2);
+    var body = document.getElementsByTagName('body')[0];
+    body.appendChild(div);
+}
+function getMessage(callback){
+    var div = document.createElement('div');
+    div.id="mesbox";
+    var div2 = document.createElement('div');
+    div2.id="mestext";
+    var text = document.createElement('textarea');
+    text.id="messagetext";
+    div2.appendChild(text);
+    var button = document.createElement('input');
+    button.type = "button";
+    button.value = "Apply";
+    button.onclick = function(){
+        var mes = document.getElementById('messagetext');
+        var message = mes.value;
+        var body = document.getElementsByTagName('body')[0];
+        body.removeChild(body.lastChild);
+        callback(message);
+    };
+    div2.appendChild(document.createElement('br'));
+    div2.appendChild(button);
+    div.appendChild(div2);
+    var body = document.getElementsByTagName('body')[0];
+    body.appendChild(div);
+}
+*/
+</script>
+</head>
+<body onload="startApp();">
+<div id="panel">
+<select id="selectview" name="selectview" value="0">
+<option value="0">Orbit</option>
+<option value="1">Free</option>
+</select>
+&nbsp;&nbsp;
+<select id="selecttype" name="selecttype" value="0">
+<option value="pass">z-Pass</option>
+<option value="fail">z-Fail</option>
+</select>
+&nbsp;&nbsp;
+<input id="drawobj" type="checkbox" name="drawobj" checked="checked"/> Draw Objects
+&nbsp;&nbsp;
+<input id="drawedges" type="checkbox" name="drawedges" checked="checked"/> Draw Edges
+&nbsp;&nbsp;
+<input id="edgesontop" type="checkbox" name="edgesontop" /> Edges On Top
+&nbsp;&nbsp;
+<input id="drawvolume" type="checkbox" name="drawvolume" checked="checked"/> Draw Volume
+&nbsp;&nbsp;
+<input id="drawshadow" type="checkbox" name="drawshadow" checked="checked"/> Draw Shadow
+<!--
+&nbsp;&nbsp;
+Size: <select id="screenshotsize" name="screenshotsize" >
+<option value="1" selected="selected">1x</option>
+<option value="2">2x</option>
+<option value="3">3x</option>
+<option value="4">4x</option>
+</select> <input type="button" value="screenshot" onclick="takeScreenshot()" />
+&nbsp;&nbsp;
+<input type="button" value="Get Camera" onclick="getCamera()"/>
+<input type="button" value="Set Camera" onclick="setCamera()"/>
+-->
+</div>
+<canvas id="screen">
+Your browser does not support WebGL.
+</canvas>
+</body>
+</html>

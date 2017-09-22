@@ -1,0 +1,55 @@
+<html>
+<head>
+</head>
+<body>
+<h2>WebGL Demonstrations for Shadow Mapping and Shadow Volume</h2>
+
+<h3>Shadow Mapping</h3>
+
+<p><a href="websm.html">Shadow Mapping WebGL Demonstration</a>
+<blockquote>This WebGL demo uses the extensions WEBGL_depth_texture and OES_texture_float to store the shadow map inside a depth texture. 
+If your system does not provide this extensions, please choose "Color tex" in the top panel.</blockquote>
+<blockquote>Usable keys: arrow keys, page up/down, +/-, mouse drag/drop, mouse wheel</blockquote>
+<blockquote>On displaying shadow map or texture contents, please click on the image to return.</blockquote>
+<blockquote>Options:
+<ul>
+<li>Shadow Map Resolution (SM Res): Internal resolution that is used to generate the shadow map.</li>
+<li>Bias: Offset that is used for the shadowing decision.</li>
+<li>Orbit/Free: Changes the camera movement mode.</li>
+<li>Show Shadow Map (Show SM): Displays content of the shadow map. Click on the image to return.</li>
+<li>Show Shadow Map (Show Tex): Same as "Show SM". Use in case the color tex option is used.</li>
+<li>Depth tex/Color tex: Switch the texture type that stores the shadow map.</li>
+<li>Draw SM: Use information from the shadow map for object coloring.</li>
+</ul>
+</blockquote>
+<blockquote>
+<a href="screenshots/sm-2.png"><img src="screenshots/sm-2.png" width="500"/></a>
+<a href="screenshots/sm2-2.png"><img src="screenshots/sm2-2.png" width="500"/></a>
+</blockquote>
+</p>
+
+<h3>Shadow Volume</h3>
+
+<p><a href="websv.html">Shadow Volume WebGL Demonstration</a>
+<blockquote>
+Usable keys: arrow keys, page up/down, +/-, mouse drag/drop, mouse wheel
+</blockquote>
+<blockquote>Options:
+<ul>
+<li>Orbit/Free: Changes the camera movement mode.</li>
+<li>z-Pass/z-Fail: Switch the shadow volume rendering approach.</li>
+<li>Draw Objects: Draw shadow casting objects.</li>
+<li>Draw Edges: Draw edges of the shadow volume planes and object silhouette edges (yellow).</li>
+<li>Edges On Top: Draw edges on top of solid objects and ground.</li>
+<li>Draw Volume: Draw areas of the shadow volume that are filled when computing the shadows.</li>
+<li>Draw Shadow: Draw shadow on top of ground.</li>
+</ul>
+</blockquote>
+<blockquote>
+<a href="screenshots/sv-2.png"><img src="screenshots/sv-2.png" width="500"/></a>
+<a href="screenshots/sv2-2.png"><img src="screenshots/sv2-2.png" width="500"/></a>
+</blockquote>
+</p>
+<a href="https://github.com/aw32/shadows3d">Repository</a>
+</body>
+</html>
